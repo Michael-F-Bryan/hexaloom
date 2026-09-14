@@ -2,5 +2,8 @@
 name = "hexaloom-syntax"
 version.workspace = true
 edition.workspace = true
+description = "Portable wire format for Hexaloom grammars"
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]

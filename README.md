@@ -18,7 +18,13 @@ The Cargo workspace and uv project both live at the repository root.
 ## Development
 
 ```console
-uv sync
-uv run python -c "import hexaloom"
-cargo metadata --no-deps
+uv sync --locked
+uv run scripts/check-versions.py
+uv build
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo nextest run --workspace --locked --no-tests=pass
+cargo test --workspace --doc --locked
 ```
+
+Release preparation, registry trust and publication are documented in [docs/releasing.md](docs/releasing.md).

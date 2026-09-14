@@ -2,6 +2,9 @@
 name = "hexaloom-lsp"
 version.workspace = true
 edition.workspace = true
+description = "Language Server Protocol implementation for Hexaloom grammars"
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-hexaloom = { path = "../hexaloom" }
+hexaloom.workspace = true

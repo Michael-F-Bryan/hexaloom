@@ -1,0 +1,98 @@
+name: CD
+run-name: Publish ${{ inputs.tag }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag created by Release Please
+        required: true
+        type: string
+
+concurrency:
+  group: publish-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: Verify release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+      - name: Verify published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test "$(git tag --points-at HEAD --list "$TAG")" = "$TAG"
+          state=$(gh release view "$TAG" --json isDraft,isPrerelease --jq '[.isDraft, .isPrerelease] | @tsv')
+          test "$state" = $'false\tfalse'
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.12.13"
+          enable-cache: true
+          python-version: "3.14"
+      - uses: actions-rust-lang/setup-rust-toolchain@v2
+        with:
+          components: clippy,rustfmt
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest@0.9.144
+      - run: uv sync --locked
+      - run: uv run scripts/check-versions.py --tag "${{ inputs.tag }}"
+      - run: uv build
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo nextest run --workspace --locked --no-tests=pass
+      - run: cargo test --workspace --doc --locked
+      - run: cargo build --workspace --release --locked
+      - uses: actions/upload-artifact@v7
+        with:
+          name: python-distributions
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  crates-io:
+    name: Publish to crates.io
+    needs: preflight
+    runs-on: ubuntu-latest
+    environment: crates-io
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions-rust-lang/setup-rust-toolchain@v2
+      - name: Install cargo-workspaces
+        run: cargo install cargo-workspaces --version 0.4.2 --locked
+      - id: auth
+        uses: rust-lang/crates-io-auth-action@v1
+      - name: Publish crates
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: |
+          cargo workspaces plan --skip-published
+          cargo workspaces publish --all --from-git --yes --locked --publish-interval 10
+
+  pypi:
+    name: Publish to PyPI
+    needs: preflight
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: python-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@v1.14.2

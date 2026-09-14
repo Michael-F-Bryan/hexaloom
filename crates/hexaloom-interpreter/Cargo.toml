@@ -2,6 +2,9 @@
 name = "hexaloom-interpreter"
 version.workspace = true
 edition.workspace = true
+description = "Reference interpreter for compiled Hexaloom grammars"
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-hexaloom = { path = "../hexaloom" }
+hexaloom.workspace = true

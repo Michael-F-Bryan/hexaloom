@@ -2,6 +2,9 @@
 name = "hexaloom"
 version.workspace = true
 edition.workspace = true
+description = "Compiler and code generators for Hexaloom"
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-hexaloom-syntax = { path = "../hexaloom-syntax" }
+hexaloom-syntax.workspace = true

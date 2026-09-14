@@ -3,5 +3,13 @@ members = ["crates/*"]
 resolver = "3"
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.0" # x-release-please-version
 edition = "2024"
+repository = "https://github.com/Michael-F-Bryan/hexaloom"
+readme = "README.md"
+
+[workspace.dependencies]
+hexaloom = { path = "crates/hexaloom", version = "0.1.0" } # x-release-please-version
+hexaloom-interpreter = { path = "crates/hexaloom-interpreter", version = "0.1.0" } # x-release-please-version
+hexaloom-lsp = { path = "crates/hexaloom-lsp", version = "0.1.0" } # x-release-please-version
+hexaloom-syntax = { path = "crates/hexaloom-syntax", version = "0.1.0" } # x-release-please-version
