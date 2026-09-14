@@ -1,0 +1,7 @@
+[package]
+name = "hexaloom"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+hexaloom-syntax = { path = "../hexaloom-syntax" }

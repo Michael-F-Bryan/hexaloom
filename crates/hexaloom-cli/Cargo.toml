@@ -1,0 +1,13 @@
+[package]
+name = "hexaloom-cli"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "hexaloom"
+path = "src/main.rs"
+
+[dependencies]
+hexaloom = { path = "../hexaloom" }
+hexaloom-interpreter = { path = "../hexaloom-interpreter" }
+hexaloom-lsp = { path = "../hexaloom-lsp" }
