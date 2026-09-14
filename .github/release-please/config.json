@@ -8,10 +8,6 @@
       "package-name": "hexaloom",
       "component": "hexaloom",
       "initial-version": "0.1.0",
-      "exclude-paths": [
-        ".github/**",
-        "docs/**"
-      ],
       "extra-files": [
         {
           "type": "generic",
