@@ -75,7 +75,7 @@ jobs:
       - name: Install cargo-workspaces
         run: cargo install cargo-workspaces --version 0.4.2 --locked
       - id: auth
-        uses: rust-lang/crates-io-auth-action@v1
+        uses: rust-lang/crates-io-auth-action@v1.0.5
       - name: Publish crates
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
