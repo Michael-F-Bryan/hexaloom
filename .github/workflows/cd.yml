@@ -33,7 +33,7 @@ jobs:
           test "$(git tag --points-at HEAD --list "$TAG")" = "$TAG"
           state=$(gh release view "$TAG" --json isDraft,isPrerelease --jq '[.isDraft, .isPrerelease] | @tsv')
           test "$state" = $'false\tfalse'
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.1.0
         with:
           version: "0.12.13"
           enable-cache: true
